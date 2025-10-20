@@ -1,17 +1,18 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getDatabase } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 // Firebase configuration
 // TODO: Replace with your actual Firebase config
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com",
-  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "your-app-id"
+  apiKey: "AIzaSyA4S7lKK6BuPj0O40_qDZAmMONW9CimsNM",
+  authDomain: "learnlingo-8bbbd.firebaseapp.com",
+  databaseURL:
+    "https://learnlingo-8bbbd-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "learnlingo-8bbbd",
+  storageBucket: "learnlingo-8bbbd.firebasestorage.app",
+  messagingSenderId: "795711421393",
+  appId: "1:795711421393:web:9c188dcdaa492179e07ef0",
 };
 
 // Initialize Firebase
