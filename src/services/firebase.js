@@ -2,17 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
-// Firebase configuration
-// TODO: Replace with your actual Firebase config
+// Firebase configuration via environment variables (Vite: import.meta.env)
 const firebaseConfig = {
-  apiKey: "AIzaSyA4S7lKK6BuPj0O40_qDZAmMONW9CimsNM",
-  authDomain: "learnlingo-8bbbd.firebaseapp.com",
-  databaseURL:
-    "https://learnlingo-8bbbd-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "learnlingo-8bbbd",
-  storageBucket: "learnlingo-8bbbd.firebasestorage.app",
-  messagingSenderId: "795711421393",
-  appId: "1:795711421393:web:9c188dcdaa492179e07ef0",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_DATABASE_URL,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
 };
 
 // Initialize Firebase
