@@ -32,11 +32,6 @@ export const getAllTeachers = async () => {
     // Try root path first since data is loaded there
     const teachersRef = ref(database);
     const snapshot = await get(teachersRef);
-    console.log(
-      "All teachers query (root):",
-      snapshot.exists(),
-      snapshot.val()
-    );
     if (snapshot.exists()) {
       const data = snapshot.val();
       // Check if data is directly in root or in teachers folder
@@ -98,6 +93,47 @@ export const addTeacher = async (teacherData) => {
     console.error("Error adding teacher:", error);
     throw error;
   }
+};
+
+// Filter teachers by criteria
+export const filterTeachers = (teachers, filters) => {
+  return teachers.filter((teacher) => {
+    // Filter by languages
+    if (filters.languages.length > 0) {
+      const hasMatchingLanguage = filters.languages.some(
+        (lang) => teacher.languages && teacher.languages.includes(lang)
+      );
+      if (!hasMatchingLanguage) return false;
+    }
+
+    // Filter by levels
+    if (filters.levels.length > 0) {
+      const hasMatchingLevel = filters.levels.some(
+        (level) => teacher.levels && teacher.levels.includes(level)
+      );
+      if (!hasMatchingLevel) return false;
+    }
+
+    // Filter by price
+    if (filters.priceRange !== "all") {
+      const price = teacher.price_per_hour;
+      switch (filters.priceRange) {
+        case "0-20":
+          if (price >= 20) return false;
+          break;
+        case "20-30":
+          if (price < 20 || price > 30) return false;
+          break;
+        case "30+":
+          if (price <= 30) return false;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return true;
+  });
 };
 
 // Initialize teachers data from JSON
