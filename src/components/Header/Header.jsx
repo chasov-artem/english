@@ -1,22 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import AuthModal from '../Modal/AuthModal';
-import './Header.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentUser } from "../../store";
+import { logoutThunk } from "../../store/authSlice";
+import AuthModal from "../Modal/AuthModal";
+import "./Header.css";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
-  const { currentUser, logout } = useAuth();
+  const [authMode, setAuthMode] = useState("login");
+  const currentUser = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate('/');
+      await dispatch(logoutThunk());
+      navigate("/");
     } catch (error) {
-      console.error('Failed to log out', error);
+      console.error("Failed to log out", error);
     }
   };
 
@@ -35,12 +38,18 @@ const Header = () => {
         <Link to="/" className="logo">
           English Learning
         </Link>
-        
-        <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/teachers" className="nav-link">Teachers</Link>
+
+        <nav className={`nav ${isMenuOpen ? "nav-open" : ""}`}>
+          <Link to="/" className="nav-link">
+            Home
+          </Link>
+          <Link to="/teachers" className="nav-link">
+            Teachers
+          </Link>
           {currentUser && (
-            <Link to="/favorites" className="nav-link">Favorites</Link>
+            <Link to="/favorites" className="nav-link">
+              Favorites
+            </Link>
           )}
         </nav>
 
@@ -54,24 +63,34 @@ const Header = () => {
             </div>
           ) : (
             <div className="auth-buttons">
-              <button className="login-btn" onClick={() => openAuthModal('login')}>Login</button>
-              <button className="signup-btn" onClick={() => openAuthModal('signup')}>Sign Up</button>
+              <button
+                className="login-btn"
+                onClick={() => openAuthModal("login")}
+              >
+                Login
+              </button>
+              <button
+                className="signup-btn"
+                onClick={() => openAuthModal("signup")}
+              >
+                Sign Up
+              </button>
             </div>
           )}
         </div>
 
-        <button 
+        <button
           className="menu-toggle"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           ☰
         </button>
       </div>
-      
-      <AuthModal 
-        isOpen={authModalOpen} 
-        onClose={closeAuthModal} 
-        mode={authMode} 
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={closeAuthModal}
+        mode={authMode}
       />
     </header>
   );

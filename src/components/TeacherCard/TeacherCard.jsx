@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useFavorites } from "../../context/FavoritesContext";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentUser, selectFavorites } from "../../store";
+import { toggleFavorite } from "../../store/favoritesSlice";
 import AuthModal from "../Modal/AuthModal";
 import BookingModal from "../Modal/BookingModal";
 import "./TeacherCard.css";
@@ -9,15 +10,18 @@ const TeacherCard = ({ teacher }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const { currentUser } = useAuth();
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const currentUser = useSelector(selectCurrentUser);
+  const favorites = useSelector(selectFavorites);
+  const dispatch = useDispatch();
+
+  const isFavorite = (id) => favorites.includes(id);
 
   const handleFavoriteClick = () => {
     if (!currentUser) {
       setShowAuthModal(true);
       return;
     }
-    toggleFavorite(teacher.id);
+    dispatch(toggleFavorite(teacher.id));
   };
 
   const handleBookLesson = () => {
