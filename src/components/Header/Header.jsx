@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../../store";
 import { logoutThunk } from "../../store/authSlice";
 import AuthModal from "../Modal/AuthModal";
-import "./Header.css";
+import styles from "./Header.module.css";
+import { LuLogIn } from "react-icons/lu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,54 +34,60 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
-      <div className="header-container">
-        <Link to="/" className="logo">
-          English Learning
+    <header className={styles.header}>
+      <div className={styles.headerContainer}>
+        <Link to="/" className={styles.logo}>
+          <div className={styles.logoIcon}>
+            <div className={styles.logoCircle}></div>
+          </div>
+          <span>LearnLingo</span>
         </Link>
 
-        <nav className={`nav ${isMenuOpen ? "nav-open" : ""}`}>
-          <Link to="/" className="nav-link">
+        <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ""}`}>
+          <Link to="/" className={styles.navLink}>
             Home
           </Link>
-          <Link to="/teachers" className="nav-link">
+          <Link to="/teachers" className={styles.navLink}>
             Teachers
           </Link>
+
+          {/* Favorites auth */}
           {currentUser && (
-            <Link to="/favorites" className="nav-link">
+            <Link to="/favorites" className={styles.navLink}>
               Favorites
             </Link>
           )}
         </nav>
 
-        <div className="auth-section">
+        <div className={styles.authSection}>
           {currentUser ? (
-            <div className="user-menu">
-              <span className="user-email">{currentUser.email}</span>
-              <button onClick={handleLogout} className="logout-btn">
+            <div className={styles.userMenu}>
+              <span className={styles.userEmail}>{currentUser.email}</span>
+              <button onClick={handleLogout} className={styles.logoutBtn}>
                 Logout
               </button>
             </div>
           ) : (
-            <div className="auth-buttons">
+            <div className={styles.authButtons}>
               <button
-                className="login-btn"
+                className={styles.loginBtn}
                 onClick={() => openAuthModal("login")}
               >
-                Login
+                <LuLogIn className={styles.loginIcon} />
+                Log in
               </button>
               <button
-                className="signup-btn"
+                className={styles.signupBtn}
                 onClick={() => openAuthModal("signup")}
               >
-                Sign Up
+                Registration
               </button>
             </div>
           )}
         </div>
 
         <button
-          className="menu-toggle"
+          className={styles.menuToggle}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           ☰

@@ -1,0 +1,213 @@
+.header {
+  background: #ffffff;
+  padding: 20px 128px;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+  color: #121417;
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  position: relative;
+}
+
+.logoCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    #0057b7 0%,
+    #0057b7 50%,
+    #ffd700 50%,
+    #ffd700 100%
+  );
+  position: relative;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navLink {
+  text-decoration: none;
+  font-family: var(--font-family);
+  color: #121417;
+  font-size: 16px;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #f4c550;
+}
+
+.authSection {
+  display: flex;
+  align-items: center;
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.loginIcon {
+  font-size: 20px;
+  color: #f4c550;
+}
+
+.loginBtn {
+  background: transparent;
+  color: #121417;
+  border: none;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 125%;
+  color: #121417;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loginBtn:hover {
+  color: #f4c550;
+  background: transparent;
+}
+
+.signupBtn {
+  background: #121417;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signupBtn:hover {
+  background: #2a2d35;
+  transform: translateY(-2px);
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.userEmail {
+  color: #121417;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.logoutBtn {
+  background: #f4c550;
+  color: #121417;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logoutBtn:hover {
+  background: #fbe9ba;
+  transform: translateY(-2px);
+}
+
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #121417;
+}
+
+@media (max-width: 768px) {
+  .headerContainer {
+    padding: 0 16px;
+  }
+
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+  }
+
+  .navOpen {
+    display: flex;
+  }
+
+  .authButtons {
+    gap: 12px;
+  }
+
+  .loginBtn {
+    font-size: 14px;
+  }
+
+  .signupBtn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .logoIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logoCircle {
+    width: 32px;
+    height: 32px;
+  }
+}
