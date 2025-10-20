@@ -63,13 +63,12 @@ export const getTeachersPaginated = async (pageSize = 4, lastKey = null) => {
       );
     }
     const snapshot = await get(q);
-    // console.log("Firebase snapshot:", snapshot.exists(), snapshot.val());
-    // console.log("Query path:", q.toString());
+
     if (snapshot.exists()) {
       const data = snapshot.val();
       const teachers = mapSnapshotToArray(data);
       const keys = Object.keys(data).sort((a, b) => parseInt(a) - parseInt(b));
-      // console.log("Teachers loaded:", teachers.length, "Keys:", keys);
+
       return {
         teachers,
         lastKey: keys[keys.length - 1] || null,
