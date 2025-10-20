@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import AuthModal from '../Modal/AuthModal';
 import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -15,6 +18,15 @@ const Header = () => {
     } catch (error) {
       console.error('Failed to log out', error);
     }
+  };
+
+  const openAuthModal = (mode) => {
+    setAuthMode(mode);
+    setAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setAuthModalOpen(false);
   };
 
   return (
@@ -42,8 +54,8 @@ const Header = () => {
             </div>
           ) : (
             <div className="auth-buttons">
-              <button className="login-btn">Login</button>
-              <button className="signup-btn">Sign Up</button>
+              <button className="login-btn" onClick={() => openAuthModal('login')}>Login</button>
+              <button className="signup-btn" onClick={() => openAuthModal('signup')}>Sign Up</button>
             </div>
           )}
         </div>
@@ -55,6 +67,12 @@ const Header = () => {
           ☰
         </button>
       </div>
+      
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={closeAuthModal} 
+        mode={authMode} 
+      />
     </header>
   );
 };
