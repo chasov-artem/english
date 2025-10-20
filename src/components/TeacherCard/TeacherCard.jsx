@@ -81,7 +81,11 @@ const TeacherCard = ({ teacher }) => {
             <div className="teacher-rating">
               <div className="stars">{renderStars(teacher.rating)}</div>
               <span className="rating-text">
-                {teacher.rating} ({teacher.reviews} reviews)
+                {teacher.rating} (
+                {typeof teacher.reviews === "object"
+                  ? Object.keys(teacher.reviews).length
+                  : teacher.reviews}{" "}
+                reviews)
               </span>
             </div>
           </div>

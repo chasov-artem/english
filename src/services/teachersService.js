@@ -6,21 +6,46 @@ import {
   query,
   limitToFirst,
   startAfter,
+  orderByKey,
 } from "firebase/database";
 import { database } from "./firebase";
+
+const mapSnapshotToArray = (data) =>
+  Object.keys(data).map((key) => ({ id: key, ...data[key] }));
+
+// Test database connection
+export const testDatabaseConnection = async () => {
+  try {
+    const testRef = ref(database);
+    const snapshot = await get(testRef);
+    // console.log("Database connection test:", snapshot.exists(), snapshot.val());
+    return snapshot.exists();
+  } catch (error) {
+    console.error("Database connection error:", error);
+    return false;
+  }
+};
 
 // Get all teachers
 export const getAllTeachers = async () => {
   try {
-    const teachersRef = ref(database, "teachers");
+    // Try root path first since data is loaded there
+    const teachersRef = ref(database);
     const snapshot = await get(teachersRef);
-
+    console.log(
+      "All teachers query (root):",
+      snapshot.exists(),
+      snapshot.val()
+    );
     if (snapshot.exists()) {
       const data = snapshot.val();
-      return Object.keys(data).map((key) => ({
-        id: key,
-        ...data[key],
-      }));
+      // Check if data is directly in root or in teachers folder
+      if (data.teachers) {
+        return mapSnapshotToArray(data.teachers);
+      } else {
+        // Data is directly in root
+        return mapSnapshotToArray(data);
+      }
     }
     return [];
   } catch (error) {
@@ -29,35 +54,32 @@ export const getAllTeachers = async () => {
   }
 };
 
-// Get teachers with pagination
+// Get teachers with pagination (ordered by key)
 export const getTeachersPaginated = async (pageSize = 4, lastKey = null) => {
   try {
-    let teachersRef = ref(database, "teachers");
-
+    // Use root path since data is loaded there
+    let q = query(ref(database), orderByKey(), limitToFirst(pageSize));
     if (lastKey) {
-      teachersRef = query(
-        teachersRef,
+      q = query(
+        ref(database),
+        orderByKey(),
         startAfter(lastKey),
         limitToFirst(pageSize)
       );
-    } else {
-      teachersRef = query(teachersRef, limitToFirst(pageSize));
     }
-
-    const snapshot = await get(teachersRef);
-
+    const snapshot = await get(q);
+    // console.log("Firebase snapshot:", snapshot.exists(), snapshot.val());
+    // console.log("Query path:", q.toString());
     if (snapshot.exists()) {
       const data = snapshot.val();
-      const teachers = Object.keys(data).map((key) => ({
-        id: key,
-        ...data[key],
-      }));
+      const teachers = mapSnapshotToArray(data);
+      const keys = Object.keys(data).sort((a, b) => parseInt(a) - parseInt(b));
+      // console.log("Teachers loaded:", teachers.length, "Keys:", keys);
       return {
         teachers,
-        lastKey: Object.keys(data)[Object.keys(data).length - 1],
+        lastKey: keys[keys.length - 1] || null,
       };
     }
-
     return { teachers: [], lastKey: null };
   } catch (error) {
     console.error("Error fetching paginated teachers:", error);
