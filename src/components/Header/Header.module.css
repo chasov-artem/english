@@ -2,7 +2,6 @@
   background: #ffffff;
   padding: 20px 128px;
   top: 0;
-  z-index: 100;
 }
 
 .headerContainer {
@@ -96,6 +95,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0;
 }
 
 .loginBtn:hover {
@@ -107,7 +107,7 @@
   background: #121417;
   color: #ffffff;
   border: none;
-  padding: 12px 24px;
+  padding: 14px 39px;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;

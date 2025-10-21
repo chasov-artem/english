@@ -13,8 +13,9 @@ const Home = () => {
               <span className={styles.highlight}>language</span> tutors
             </h1>
             <p className={styles.heroSubtitle}>
-              Embark on an Exciting Language Learning Journey with Expert Tutors
-              and Cutting-Edge Technology
+              Embark on an Exciting Language Journey with Expert Language
+              Tutors: Elevate your language proficiency to new heights by
+              connecting with highly qualified and experienced tutors.
             </p>
             <Link
               to="/teachers"
