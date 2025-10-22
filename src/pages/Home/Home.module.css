@@ -9,19 +9,21 @@
 }
 
 .heroContainer {
-  max-width: 1200px;
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 24px;
+  max-width: 1312px;
 }
 
 .heroLeft {
   border-radius: 30px;
   background: #f8f8f8;
-  padding: 98px 30px 98px 64px;
+  padding: 98px 64px 98px 64px;
   border-radius: 30px;
   text-align: left;
+  width: 720px;
+  height: 530px;
+  flex-shrink: 0;
 }
 
 .heroLeft h1 {
@@ -87,79 +89,87 @@
 }
 
 .heroRight {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.heroImage {
-  background: #f4c550;
-  width: 400px;
-  height: 400px;
   border-radius: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 568px;
+  height: 530px;
+  background: #fbe9ba;
   position: relative;
+  flex-shrink: 0;
 }
 
-.character {
-  font-size: 120px;
+.head {
+  position: absolute;
+  top: 80px;
+  left: 120px;
+  width: 339px;
+  height: 339px;
+  z-index: 2;
   animation: bounce 2s infinite;
 }
 
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+.mac {
+  position: absolute;
+  bottom: 0px;
+  left: 110px;
+  width: 360px;
+  height: 176px;
+  z-index: 3;
 }
 
 .stats {
-  padding: 40px 20px;
+  padding: 40px 110px;
   background: #ffffff;
-  margin: 40px 20px;
   border-radius: 30px;
   border: 2px dashed #f4c550;
+  max-width: 1312px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }
 
 .statsContainer {
-  max-width: 1200px;
   margin: 0 auto;
+
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 100px;
 }
 
 .statItem {
-  text-align: center;
-  flex: 1;
-  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-start;
 }
 
 .statNumber {
-  font-size: 36px;
-  font-weight: 700;
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 114%;
+  letter-spacing: -0.02em;
   color: #121417;
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0; /* Забороняє стискання, щоб число не переносилося */
 }
 
 .statLabel {
-  font-size: 16px;
-  color: #8a8a8a;
-  font-weight: 500;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 129%;
+  letter-spacing: -0.02em;
+  color: rgba(18, 20, 23, 0.7);
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  text-align: left;
+  max-width: 140px; /* constrain to force two lines where needed */
 }
 
 @media (max-width: 768px) {
