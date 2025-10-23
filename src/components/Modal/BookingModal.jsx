@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React, { useState, useEffect } from "react";
+import { useFormik } from "formik";
 import * as yup from "yup";
-import Modal from "./Modal";
-import "./BookingModal.css";
+import { CgClose } from "react-icons/cg";
+import styles from "./BookingModal.module.css";
 
-const schema = yup.object({
+const validationSchema = yup.object({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   phone: yup.string().required("Phone is required"),
@@ -17,143 +16,223 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      phone: "",
+      preferredTime: "",
+      message: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        setError("");
+        setLoading(true);
+
+        // Here you would typically send the booking request to your backend
+        console.log("Booking data:", { ...values, teacherId: teacher.id });
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        alert("Booking request sent successfully!");
+        onClose();
+        formik.resetForm();
+      } catch (error) {
+        setError("Failed to send booking request. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      setError("");
-      setLoading(true);
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
 
-      // Here you would typically send the booking request to your backend
-      console.log("Booking data:", { ...data, teacherId: teacher.id });
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      alert("Booking request sent successfully!");
-      onClose();
-      reset();
-    } catch (error) {
-      setError("Failed to send booking request. Please try again.");
-    } finally {
-      setLoading(false);
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     }
-  };
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, onClose]);
 
   const handleClose = () => {
     onClose();
     setError("");
-    reset();
+    formik.resetForm();
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Book Trial Lesson">
-      <div className="booking-content">
-        <div className="teacher-info">
-          <img
-            src={teacher.avatar_url}
-            alt={teacher.name}
-            className="teacher-avatar"
-          />
-          <div>
-            <h3>
-              {teacher.name} {teacher.surname}
-            </h3>
-            <p>${teacher.price_per_hour}/hour</p>
-          </div>
+    <div className={styles.overlay} onClick={handleClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>Book Trial Lesson</h2>
+          <button className={styles.modalClose} onClick={handleClose}>
+            <CgClose />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="booking-form">
-          {error && <div className="error-message">{error}</div>}
+        <div className={styles.modalBody}>
+          <div className={styles.bookingContent}>
+            <div className={styles.teacherInfo}>
+              <img
+                src={teacher.avatar_url}
+                alt={teacher.name}
+                className={styles.teacherAvatar}
+              />
+              <div>
+                <h3>
+                  {teacher.name} {teacher.surname}
+                </h3>
+                <p>${teacher.price_per_hour}/hour</p>
+              </div>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              {...register("name")}
-              className={errors.name ? "error" : ""}
-              placeholder="Enter your full name"
-            />
-            {errors.name && (
-              <span className="field-error">{errors.name.message}</span>
-            )}
+            <form onSubmit={formik.handleSubmit} className={styles.bookingForm}>
+              {error && <div className={styles.errorMessage}>{error}</div>}
+
+              <div className={styles.formGroup}>
+                <label htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={
+                    formik.touched.name && formik.errors.name
+                      ? styles.error
+                      : ""
+                  }
+                  placeholder="Enter your full name"
+                />
+                {formik.touched.name && formik.errors.name && (
+                  <span className={styles.fieldError}>
+                    {formik.errors.name}
+                  </span>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={
+                    formik.touched.email && formik.errors.email
+                      ? styles.error
+                      : ""
+                  }
+                  placeholder="Enter your email"
+                />
+                {formik.touched.email && formik.errors.email && (
+                  <span className={styles.fieldError}>
+                    {formik.errors.email}
+                  </span>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="phone">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formik.values.phone}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={
+                    formik.touched.phone && formik.errors.phone
+                      ? styles.error
+                      : ""
+                  }
+                  placeholder="Enter your phone number"
+                />
+                {formik.touched.phone && formik.errors.phone && (
+                  <span className={styles.fieldError}>
+                    {formik.errors.phone}
+                  </span>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="preferredTime">Preferred Time</label>
+                <select
+                  id="preferredTime"
+                  name="preferredTime"
+                  value={formik.values.preferredTime}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={
+                    formik.touched.preferredTime && formik.errors.preferredTime
+                      ? styles.error
+                      : ""
+                  }
+                >
+                  <option value="">Select preferred time</option>
+                  <option value="morning">Morning (9 AM - 12 PM)</option>
+                  <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
+                  <option value="evening">Evening (5 PM - 9 PM)</option>
+                </select>
+                {formik.touched.preferredTime &&
+                  formik.errors.preferredTime && (
+                    <span className={styles.fieldError}>
+                      {formik.errors.preferredTime}
+                    </span>
+                  )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formik.values.message}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={
+                    formik.touched.message && formik.errors.message
+                      ? styles.error
+                      : ""
+                  }
+                  placeholder="Tell us about your learning goals..."
+                  rows="4"
+                />
+                {formik.touched.message && formik.errors.message && (
+                  <span className={styles.fieldError}>
+                    {formik.errors.message}
+                  </span>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={styles.submitBtn}
+              >
+                {loading ? "Sending..." : "Send Booking Request"}
+              </button>
+            </form>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              {...register("email")}
-              className={errors.email ? "error" : ""}
-              placeholder="Enter your email"
-            />
-            {errors.email && (
-              <span className="field-error">{errors.email.message}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              {...register("phone")}
-              className={errors.phone ? "error" : ""}
-              placeholder="Enter your phone number"
-            />
-            {errors.phone && (
-              <span className="field-error">{errors.phone.message}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="preferredTime">Preferred Time</label>
-            <select
-              id="preferredTime"
-              {...register("preferredTime")}
-              className={errors.preferredTime ? "error" : ""}
-            >
-              <option value="">Select preferred time</option>
-              <option value="morning">Morning (9 AM - 12 PM)</option>
-              <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
-              <option value="evening">Evening (5 PM - 9 PM)</option>
-            </select>
-            {errors.preferredTime && (
-              <span className="field-error">
-                {errors.preferredTime.message}
-              </span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="message">Message</label>
-            <textarea
-              id="message"
-              {...register("message")}
-              className={errors.message ? "error" : ""}
-              placeholder="Tell us about your learning goals..."
-              rows="4"
-            />
-            {errors.message && (
-              <span className="field-error">{errors.message.message}</span>
-            )}
-          </div>
-
-          <button type="submit" disabled={loading} className="submit-btn">
-            {loading ? "Sending..." : "Send Booking Request"}
-          </button>
-        </form>
+        </div>
       </div>
-    </Modal>
+    </div>
   );
 };
 

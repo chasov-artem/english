@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser, selectFavorites } from "../../store";
 import { toggleFavorite } from "../../store/favoritesSlice";
-import AuthModal from "../Modal/AuthModal";
+import LogInModal from "../Modal/LogInModal";
 import BookingModal from "../Modal/BookingModal";
 import "./TeacherCard.css";
 
@@ -149,10 +149,9 @@ const TeacherCard = ({ teacher }) => {
         )}
       </div>
 
-      <AuthModal
+      <LogInModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        mode="login"
       />
 
       <BookingModal

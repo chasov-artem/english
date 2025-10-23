@@ -3,14 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../../store";
 import { logoutThunk } from "../../store/authSlice";
-import AuthModal from "../Modal/AuthModal";
+import LogInModal from "../Modal/LogInModal";
+import SignUpModal from "../Modal/SignUpModal";
 import styles from "./Header.module.css";
 import { LuLogIn } from "react-icons/lu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState("login");
+  const [logInModalOpen, setLogInModalOpen] = useState(false);
+  const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const currentUser = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,13 +25,20 @@ const Header = () => {
     }
   };
 
-  const openAuthModal = (mode) => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
+  const openLogInModal = () => {
+    setLogInModalOpen(true);
   };
 
-  const closeAuthModal = () => {
-    setAuthModalOpen(false);
+  const closeLogInModal = () => {
+    setLogInModalOpen(false);
+  };
+
+  const openSignUpModal = () => {
+    setSignUpModalOpen(true);
+  };
+
+  const closeSignUpModal = () => {
+    setSignUpModalOpen(false);
   };
 
   return (
@@ -69,17 +77,11 @@ const Header = () => {
             </div>
           ) : (
             <div className={styles.authButtons}>
-              <button
-                className={styles.loginBtn}
-                onClick={() => openAuthModal("login")}
-              >
+              <button className={styles.loginBtn} onClick={openLogInModal}>
                 <LuLogIn className={styles.loginIcon} />
                 Log in
               </button>
-              <button
-                className={styles.signupBtn}
-                onClick={() => openAuthModal("signup")}
-              >
+              <button className={styles.signupBtn} onClick={openSignUpModal}>
                 Registration
               </button>
             </div>
@@ -94,10 +96,15 @@ const Header = () => {
         </button>
       </div>
 
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={closeAuthModal}
-        mode={authMode}
+      <LogInModal
+        isOpen={logInModalOpen}
+        onClose={closeLogInModal}
+        onSwitchToSignUp={openSignUpModal}
+      />
+      <SignUpModal
+        isOpen={signUpModalOpen}
+        onClose={closeSignUpModal}
+        onSwitchToLogIn={openLogInModal}
       />
     </header>
   );
