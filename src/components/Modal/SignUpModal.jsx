@@ -8,6 +8,7 @@ import { FiEyeOff } from "react-icons/fi";
 import styles from "./SignUpModal.module.css";
 
 const validationSchema = yup.object({
+  name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
@@ -15,7 +16,7 @@ const validationSchema = yup.object({
     .required("Password is required"),
 });
 
-const SignUpModal = ({ isOpen, onClose, onSwitchToLogIn }) => {
+const SignUpModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToLogIn }) => {
 
   const formik = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
     },
@@ -85,11 +87,31 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToLogIn }) => {
 
         <div className={styles.modalBody}>
           <div className={styles.authDescription}>
-            Create an account to save your favorite teachers and book lessons.
+            Thank you for your interest in our platform! In order to register,
+            we need some information. Please provide us with the following
+            information
           </div>
 
           <form onSubmit={formik.handleSubmit} className={styles.authForm}>
             {error && <div className={styles.errorMessage}>{error}</div>}
+
+            <div className={styles.formGroup}>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={
+                  formik.touched.name && formik.errors.name ? styles.error : ""
+                }
+                placeholder="Name"
+              />
+              {formik.touched.name && formik.errors.name && (
+                <span className={styles.fieldError}>{formik.errors.name}</span>
+              )}
+            </div>
 
             <div className={styles.formGroup}>
               <input
@@ -147,24 +169,8 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToLogIn }) => {
               disabled={loading}
               className={styles.submitBtn}
             >
-              {loading ? "Loading..." : "Registration"}
+              {loading ? "Loading..." : "Sign Up"}
             </button>
-
-            <div className={styles.authSwitch}>
-              <p>
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    if (onSwitchToLogIn) onSwitchToLogIn();
-                  }}
-                  className={styles.switchBtn}
-                >
-                  Log In
-                </button>
-              </p>
-            </div>
           </form>
         </div>
       </div>

@@ -96,16 +96,8 @@ const Header = () => {
         </button>
       </div>
 
-      <LogInModal
-        isOpen={logInModalOpen}
-        onClose={closeLogInModal}
-        onSwitchToSignUp={openSignUpModal}
-      />
-      <SignUpModal
-        isOpen={signUpModalOpen}
-        onClose={closeSignUpModal}
-        onSwitchToLogIn={openLogInModal}
-      />
+      <LogInModal isOpen={logInModalOpen} onClose={closeLogInModal} />
+      <SignUpModal isOpen={signUpModalOpen} onClose={closeSignUpModal} />
     </header>
   );
 };

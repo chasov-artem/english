@@ -15,7 +15,7 @@ const validationSchema = yup.object({
     .required("Password is required"),
 });
 
-const LogInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
+const LogInModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -150,22 +150,6 @@ const LogInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
             >
               {loading ? "Loading..." : "Log In"}
             </button>
-
-            <div className={styles.authSwitch}>
-              <p>
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    if (onSwitchToSignUp) onSwitchToSignUp();
-                  }}
-                  className={styles.switchBtn}
-                >
-                  Sign Up
-                </button>
-              </p>
-            </div>
           </form>
         </div>
       </div>
