@@ -6,6 +6,7 @@ import {
 } from "../../services/teachersService";
 import TeacherCard from "../../components/TeacherCard/TeacherCard";
 import TeachersFilters from "../../components/TeachersFilters/TeachersFilters";
+import styles from "./Teachers.module.css";
 
 const PAGE_SIZE = 4;
 
@@ -17,8 +18,8 @@ const Teachers = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [filters, setFilters] = useState({
-    languages: [],
-    levels: [],
+    selectedLanguage: "",
+    selectedLevel: "",
     priceRange: "all",
   });
 
@@ -37,7 +38,43 @@ const Teachers = () => {
   };
 
   const applyFilters = () => {
-    const filtered = filterTeachers(allTeachers, filters);
+    let filtered = [...allTeachers];
+
+    // Filter by language
+    if (filters.selectedLanguage) {
+      filtered = filtered.filter((teacher) =>
+        teacher.languages.some((lang) =>
+          lang.toLowerCase().includes(filters.selectedLanguage.toLowerCase())
+        )
+      );
+    }
+
+    // Filter by level
+    if (filters.selectedLevel) {
+      filtered = filtered.filter((teacher) =>
+        teacher.levels.some((level) =>
+          level.toLowerCase().includes(filters.selectedLevel.toLowerCase())
+        )
+      );
+    }
+
+    // Filter by price
+    if (filters.priceRange !== "all") {
+      filtered = filtered.filter((teacher) => {
+        const price = teacher.price_per_hour;
+        switch (filters.priceRange) {
+          case "0-20":
+            return price < 20;
+          case "20-30":
+            return price >= 20 && price <= 30;
+          case "30+":
+            return price > 30;
+          default:
+            return true;
+        }
+      });
+    }
+
     setFilteredTeachers(filtered);
     setDisplayedTeachers(filtered.slice(0, PAGE_SIZE));
     setLastKey(filtered.length > PAGE_SIZE ? PAGE_SIZE - 1 : null);
@@ -72,38 +109,34 @@ const Teachers = () => {
   }, [allTeachers, filters]);
 
   return (
-    <div className="teachers">
-      <h1>Наші викладачі</h1>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className={styles.teachersPage}>
+      {error && <p className={styles.errorMessage}>{error}</p>}
 
       <TeachersFilters filters={filters} onFilterChange={handleFilterChange} />
 
-      <div className="teachers-results">
-        <p>Знайдено викладачів: {filteredTeachers.length}</p>
-      </div>
-
-      <div className="teachers-grid" style={{ display: "grid", gap: 16 }}>
+      <div className={styles.teachersList}>
         {displayedTeachers.map((t) => (
           <TeacherCard key={t.id} teacher={t} />
         ))}
       </div>
 
       {displayedTeachers.length === 0 && !loading && (
-        <p style={{ textAlign: "center", color: "#666", marginTop: "2rem" }}>
-          Викладачів не знайдено за обраними фільтрами
+        <p className={styles.noResults}>
+          No teachers found with the selected filters
         </p>
       )}
 
-      <div style={{ marginTop: 24 }}>
-        <button onClick={loadMoreTeachers} disabled={loading || !lastKey}>
-          {loading
-            ? "Завантаження..."
-            : lastKey
-            ? "Завантажити ще"
-            : "Більше немає"}
-        </button>
-      </div>
+      {displayedTeachers.length > 0 && lastKey && (
+        <div className={styles.loadMoreContainer}>
+          <button
+            className={styles.loadMoreBtn}
+            onClick={loadMoreTeachers}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load more"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

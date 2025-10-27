@@ -1,5 +1,5 @@
 import React from "react";
-import "./TeachersFilters.css";
+import styles from "./TeachersFilters.module.css";
 
 const TeachersFilters = ({ filters, onFilterChange }) => {
   const languages = [
@@ -11,7 +11,16 @@ const TeachersFilters = ({ filters, onFilterChange }) => {
     "Portuguese",
     "Russian",
   ];
-  const levels = ["Beginner", "Intermediate", "Advanced"];
+
+  const levels = [
+    "A1 Beginner",
+    "A2 Elementary",
+    "B1 Intermediate",
+    "B2 Upper-Intermediate",
+    "C1 Advanced",
+    "C2 Proficiency",
+  ];
+
   const priceRanges = [
     { label: "All prices", value: "all" },
     { label: "Under $20", value: "0-20" },
@@ -20,94 +29,78 @@ const TeachersFilters = ({ filters, onFilterChange }) => {
   ];
 
   const handleLanguageChange = (language) => {
-    const newLanguages = filters.languages.includes(language)
-      ? filters.languages.filter((l) => l !== language)
-      : [...filters.languages, language];
-    onFilterChange({ ...filters, languages: newLanguages });
+    onFilterChange({ ...filters, selectedLanguage: language });
   };
 
   const handleLevelChange = (level) => {
-    const newLevels = filters.levels.includes(level)
-      ? filters.levels.filter((l) => l !== level)
-      : [...filters.levels, level];
-    onFilterChange({ ...filters, levels: newLevels });
+    onFilterChange({ ...filters, selectedLevel: level });
   };
 
   const handlePriceChange = (priceRange) => {
     onFilterChange({ ...filters, priceRange });
   };
 
-  const clearFilters = () => {
-    onFilterChange({
-      languages: [],
-      levels: [],
-      priceRange: "all",
-    });
-  };
-
-  const hasActiveFilters =
-    filters.languages.length > 0 ||
-    filters.levels.length > 0 ||
-    filters.priceRange !== "all";
-
   return (
-    <div className="teachers-filters">
-      <div className="filters-header">
-        <h3>Фільтри</h3>
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className="clear-filters-btn">
-            Очистити фільтри
-          </button>
-        )}
-      </div>
-
-      <div className="filter-section">
-        <h4>Мови</h4>
-        <div className="filter-options">
-          {languages.map((language) => (
-            <label key={language} className="filter-option">
-              <input
-                type="checkbox"
-                checked={filters.languages.includes(language)}
-                onChange={() => handleLanguageChange(language)}
-              />
-              <span>{language}</span>
-            </label>
-          ))}
+    <div className={styles.filtersContainer}>
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>
+          <span className={styles.filterLabelText}>Languages</span>
+        </label>
+        <div className={styles.selectWrapper}>
+          <select
+            className={`${styles.filterSelect} ${styles.filterControl}`}
+            value={filters.selectedLanguage || ""}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+          >
+            <option value="">Select language</option>
+            {languages.map((language) => (
+              <option key={language} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
+          <span className={styles.selectArrow} aria-hidden="true" />
         </div>
       </div>
 
-      <div className="filter-section">
-        <h4>Рівень</h4>
-        <div className="filter-options">
-          {levels.map((level) => (
-            <label key={level} className="filter-option">
-              <input
-                type="checkbox"
-                checked={filters.levels.includes(level)}
-                onChange={() => handleLevelChange(level)}
-              />
-              <span>{level}</span>
-            </label>
-          ))}
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>
+          <span className={styles.filterLabelText}>Level of knowledge</span>
+        </label>
+        <div className={styles.selectWrapper}>
+          <select
+            className={`${styles.filterSelect} ${styles.filterControl}`}
+            value={filters.selectedLevel || ""}
+            onChange={(e) => handleLevelChange(e.target.value)}
+          >
+            <option value="">Select level</option>
+            {levels.map((level) => (
+              <option key={level} value={level}>
+                {level}
+              </option>
+            ))}
+          </select>
+          <span className={styles.selectArrow} aria-hidden="true" />
         </div>
       </div>
 
-      <div className="filter-section">
-        <h4>Ціна за годину</h4>
-        <div className="filter-options">
-          {priceRanges.map((range) => (
-            <label key={range.value} className="filter-option">
-              <input
-                type="radio"
-                name="priceRange"
-                value={range.value}
-                checked={filters.priceRange === range.value}
-                onChange={() => handlePriceChange(range.value)}
-              />
-              <span>{range.label}</span>
-            </label>
-          ))}
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>
+          <span className={styles.filterLabelText}>Price</span>
+        </label>
+        <div className={styles.selectWrapper}>
+          <select
+            className={`${styles.filterSelect} ${styles.filterControl}`}
+            value={filters.priceRange || "all"}
+            onChange={(e) => handlePriceChange(e.target.value)}
+          >
+            {priceRanges.map((range) => (
+              <option key={range.value} value={range.value}>
+                {range.label}
+              </option>
+            ))}
+          </select>
+          <span className={styles.selectArrow} aria-hidden="true" />
         </div>
       </div>
     </div>

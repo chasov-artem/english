@@ -1,0 +1,54 @@
+.teachersPage {
+  padding: 96px 128px;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  text-align: center;
+  font-size: 16px;
+  margin: 20px 0;
+  padding: 0 128px;
+}
+
+.teachersList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 128px;
+}
+
+.noResults {
+  text-align: center;
+  color: #8a8a89;
+  font-size: 18px;
+  margin: 40px 0;
+  padding: 0 128px;
+}
+
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  padding: 0 128px;
+}
+
+.loadMoreBtn {
+  background: #f4c550;
+  color: #121417;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.loadMoreBtn:hover:not(:disabled) {
+  background: #e6b800;
+}
+
+.loadMoreBtn:disabled {
+  background: #8a8a89;
+  cursor: not-allowed;
+}

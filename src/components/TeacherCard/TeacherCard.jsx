@@ -4,7 +4,8 @@ import { selectCurrentUser, selectFavorites } from "../../store";
 import { toggleFavorite } from "../../store/favoritesSlice";
 import LogInModal from "../Modal/LogInModal";
 import BookingModal from "../Modal/BookingModal";
-import "./TeacherCard.css";
+import { FaHeart, FaRegHeart, FaStar, FaDesktop } from "react-icons/fa";
+import styles from "./TeacherCard.module.css";
 
 const TeacherCard = ({ teacher }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,28 +39,16 @@ const TeacherCard = ({ teacher }) => {
     const hasHalfStar = rating % 1 !== 0;
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <span key={i} className="star filled">
-          ★
-        </span>
-      );
+      stars.push(<FaStar key={i} className={styles.starFilled} />);
     }
 
     if (hasHalfStar) {
-      stars.push(
-        <span key="half" className="star half">
-          ☆
-        </span>
-      );
+      stars.push(<FaStar key="half" className={styles.starHalf} />);
     }
 
     const emptyStars = 5 - Math.ceil(rating);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <span key={`empty-${i}`} className="star empty">
-          ☆
-        </span>
-      );
+      stars.push(<FaStar key={`empty-${i}`} className={styles.starEmpty} />);
     }
 
     return stars;
@@ -67,32 +56,47 @@ const TeacherCard = ({ teacher }) => {
 
   return (
     <>
-      <div className={`teacher-card ${isExpanded ? "expanded" : ""}`}>
-        <div className="card-header">
-          <img
-            src={teacher.avatar_url}
-            alt={`${teacher.name} ${teacher.surname}`}
-            className="teacher-avatar"
-          />
-          <div className="teacher-info">
-            <h3 className="teacher-name">
+      <div className={styles.teacherCard}>
+        <div className={styles.cardHeader}>
+          <div className={styles.avatarContainer}>
+            <img
+              src={teacher.avatar_url}
+              alt={`${teacher.name} ${teacher.surname}`}
+              className={styles.teacherAvatar}
+            />
+            <div className={styles.onlineIndicator}></div>
+          </div>
+
+          <div className={styles.teacherInfo}>
+            <h3 className={styles.teacherName}>
               {teacher.name} {teacher.surname}
             </h3>
-            <div className="teacher-rating">
-              <div className="stars">{renderStars(teacher.rating)}</div>
-              <span className="rating-text">
-                {teacher.rating} (
-                {typeof teacher.reviews === "object"
-                  ? Object.keys(teacher.reviews).length
-                  : teacher.reviews}{" "}
-                reviews)
-              </span>
+
+            <div className={styles.teacherStats}>
+              <div className={styles.statItem}>
+                <FaDesktop className={styles.statIcon} />
+                <span>Lessons online</span>
+              </div>
+              <div className={styles.statItem}>
+                <span>Lessons done: {teacher.lessons_done}</span>
+              </div>
+              <div className={styles.statItem}>
+                <FaStar className={styles.starIcon} />
+                <span>Rating: {teacher.rating}</span>
+              </div>
+              <div className={styles.statItem}>
+                <span>
+                  Price / 1 hour:{" "}
+                  <span className={styles.priceValue}>
+                    ${teacher.price_per_hour}
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
+
           <button
-            className={`favorite-btn ${
-              isFavorite(teacher.id) ? "favorited" : ""
-            }`}
+            className={styles.favoriteBtn}
             onClick={handleFavoriteClick}
             title={
               isFavorite(teacher.id)
@@ -100,53 +104,45 @@ const TeacherCard = ({ teacher }) => {
                 : "Add to favorites"
             }
           >
-            {isFavorite(teacher.id) ? "❤️" : "🤍"}
+            {isFavorite(teacher.id) ? (
+              <FaHeart className={styles.heartFilled} />
+            ) : (
+              <FaRegHeart className={styles.heartOutline} />
+            )}
           </button>
         </div>
 
-        <div className="card-content">
-          <div className="teacher-details">
-            <div className="detail-item">
-              <strong>Languages:</strong> {teacher.languages.join(", ")}
-            </div>
-            <div className="detail-item">
-              <strong>Levels:</strong> {teacher.levels.join(", ")}
-            </div>
-            <div className="detail-item">
-              <strong>Price:</strong> ${teacher.price_per_hour}/hour
-            </div>
-            <div className="detail-item">
-              <strong>Lessons completed:</strong> {teacher.lessons_done}
-            </div>
+        <div className={styles.cardContent}>
+          <div className={styles.languagesInfo}>
+            <span className={styles.speaksLabel}>Speaks: </span>
+            <span className={styles.languages}>
+              {teacher.languages.join(", ")}
+            </span>
           </div>
 
-          <div className="card-actions">
-            <button
-              className="read-more-btn"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? "Read less" : "Read more"}
-            </button>
-            <button className="book-lesson-btn" onClick={handleBookLesson}>
-              Book trial lesson
-            </button>
+          <div className={styles.lessonInfo}>
+            <p>{teacher.lesson_info}</p>
+          </div>
+
+          <div className={styles.conditions}>
+            <p>{teacher.conditions}</p>
+          </div>
+
+          <button
+            className={styles.readMoreBtn}
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            Read more
+          </button>
+
+          <div className={styles.skillTags}>
+            {teacher.levels.map((level) => (
+              <span key={level} className={styles.skillTag}>
+                #{level}
+              </span>
+            ))}
           </div>
         </div>
-
-        {isExpanded && (
-          <div className="expanded-content">
-            <div className="additional-info">
-              <h4>About the lessons:</h4>
-              <p>{teacher.lesson_info}</p>
-
-              <h4>Conditions:</h4>
-              <p>{teacher.conditions}</p>
-
-              <h4>Experience:</h4>
-              <p>{teacher.experience}</p>
-            </div>
-          </div>
-        )}
       </div>
 
       <LogInModal

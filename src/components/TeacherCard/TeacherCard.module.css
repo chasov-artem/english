@@ -1,0 +1,197 @@
+.teacherCard {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1184px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.avatarContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.teacherAvatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.onlineIndicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  background: #38cd3e;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.teacherInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.teacherName {
+  font-size: 24px;
+  font-weight: 500;
+  color: #121417;
+  margin: 0;
+}
+
+.teacherStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  color: #121417;
+}
+
+.statIcon {
+  width: 16px;
+  height: 16px;
+  color: #8a8a89;
+}
+
+.starIcon {
+  width: 16px;
+  height: 16px;
+  color: #ffc531;
+}
+
+.priceValue {
+  color: #38cd3e;
+  font-weight: 500;
+}
+
+.favoriteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.favoriteBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.heartFilled {
+  width: 24px;
+  height: 24px;
+  color: #f4c550;
+}
+
+.heartOutline {
+  width: 24px;
+  height: 24px;
+  color: #8a8a89;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.languagesInfo {
+  font-size: 16px;
+  color: #121417;
+}
+
+.speaksLabel {
+  font-weight: 500;
+}
+
+.languages {
+  color: #8a8a89;
+}
+
+.lessonInfo {
+  font-size: 16px;
+  color: #121417;
+  line-height: 1.5;
+}
+
+.conditions {
+  font-size: 16px;
+  color: #121417;
+  line-height: 1.5;
+}
+
+.readMoreBtn {
+  background: none;
+  border: none;
+  color: #f4c550;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  align-self: flex-start;
+  padding: 0;
+}
+
+.readMoreBtn:hover {
+  color: #e6b800;
+}
+
+.skillTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.skillTag {
+  background: #fbe9ba;
+  color: #121417;
+  padding: 8px 16px;
+  border-radius: 35px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.starFilled {
+  color: #ffc531;
+  width: 16px;
+  height: 16px;
+}
+
+.starHalf {
+  color: #ffc531;
+  width: 16px;
+  height: 16px;
+  opacity: 0.5;
+}
+
+.starEmpty {
+  color: #8a8a89;
+  width: 16px;
+  height: 16px;
+}
+
