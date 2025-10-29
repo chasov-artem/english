@@ -46,62 +46,51 @@ const TeachersFilters = ({ filters, onFilterChange }) => {
         <label className={styles.filterLabel}>
           <span className={styles.filterLabelText}>Languages</span>
         </label>
-        <div className={styles.selectWrapper}>
-          <select
-            className={`${styles.filterSelect} ${styles.filterControl}`}
-            value={filters.selectedLanguage || ""}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-          >
-            <option value="">Select language</option>
-            {languages.map((language) => (
-              <option key={language} value={language}>
-                {language}
-              </option>
-            ))}
-          </select>
-          <span className={styles.selectArrow} aria-hidden="true" />
-        </div>
+        <select
+          className={`${styles.filterSelect} ${styles.languageSelect}`}
+          value={filters.selectedLanguage || languages[0]}
+          onChange={(e) => handleLanguageChange(e.target.value)}
+        >
+          {languages.map((language) => (
+            <option key={language} value={language}>
+              {language}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.filterGroup}>
         <label className={styles.filterLabel}>
           <span className={styles.filterLabelText}>Level of knowledge</span>
         </label>
-        <div className={styles.selectWrapper}>
-          <select
-            className={`${styles.filterSelect} ${styles.filterControl}`}
-            value={filters.selectedLevel || ""}
-            onChange={(e) => handleLevelChange(e.target.value)}
-          >
-            <option value="">Select level</option>
-            {levels.map((level) => (
-              <option key={level} value={level}>
-                {level}
-              </option>
-            ))}
-          </select>
-          <span className={styles.selectArrow} aria-hidden="true" />
-        </div>
+        <select
+          className={`${styles.filterSelect} ${styles.levelSelect}`}
+          value={filters.selectedLevel || levels[0]}
+          onChange={(e) => handleLevelChange(e.target.value)}
+        >
+          {levels.map((level) => (
+            <option key={level} value={level}>
+              {level}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.filterGroup}>
         <label className={styles.filterLabel}>
           <span className={styles.filterLabelText}>Price</span>
         </label>
-        <div className={styles.selectWrapper}>
-          <select
-            className={`${styles.filterSelect} ${styles.filterControl}`}
-            value={filters.priceRange || "all"}
-            onChange={(e) => handlePriceChange(e.target.value)}
-          >
-            {priceRanges.map((range) => (
-              <option key={range.value} value={range.value}>
-                {range.label}
-              </option>
-            ))}
-          </select>
-          <span className={styles.selectArrow} aria-hidden="true" />
-        </div>
+        <select
+          className={`${styles.filterSelect} ${styles.priceSelect}`}
+          value={filters.priceRange || "all"}
+          onChange={(e) => handlePriceChange(e.target.value)}
+        >
+          {priceRanges.map((range) => (
+            <option key={range.value} value={range.value}>
+              {range.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

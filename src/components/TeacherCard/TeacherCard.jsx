@@ -25,34 +25,7 @@ const TeacherCard = ({ teacher }) => {
     dispatch(toggleFavorite(teacher.id));
   };
 
-  const handleBookLesson = () => {
-    if (!currentUser) {
-      setShowAuthModal(true);
-      return;
-    }
-    setShowBookingModal(true);
-  };
-
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<FaStar key={i} className={styles.starFilled} />);
-    }
-
-    if (hasHalfStar) {
-      stars.push(<FaStar key="half" className={styles.starHalf} />);
-    }
-
-    const emptyStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaStar key={`empty-${i}`} className={styles.starEmpty} />);
-    }
-
-    return stars;
-  };
+  // Intentionally no-op: booking is opened from other triggers when needed
 
   return (
     <>
@@ -120,28 +93,35 @@ const TeacherCard = ({ teacher }) => {
             </span>
           </div>
 
-          <div className={styles.lessonInfo}>
-            <p>{teacher.lesson_info}</p>
-          </div>
+          {isExpanded && (
+            <>
+              <div className={styles.lessonInfo}>
+                <p>{teacher.lesson_info}</p>
+              </div>
 
-          <div className={styles.conditions}>
-            <p>{teacher.conditions}</p>
-          </div>
+              <div className={styles.conditions}>
+                <p>{teacher.conditions}</p>
+              </div>
+            </>
+          )}
 
           <button
             className={styles.readMoreBtn}
             onClick={() => setIsExpanded(!isExpanded)}
+            aria-expanded={isExpanded}
           >
-            Read more
+            {isExpanded ? "Hide" : "Read more"}
           </button>
 
-          <div className={styles.skillTags}>
-            {teacher.levels.map((level) => (
-              <span key={level} className={styles.skillTag}>
-                #{level}
-              </span>
-            ))}
-          </div>
+          {isExpanded && (
+            <div className={styles.skillTags}>
+              {teacher.levels.map((level) => (
+                <span key={level} className={styles.skillTag}>
+                  #{level}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

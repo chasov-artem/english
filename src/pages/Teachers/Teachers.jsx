@@ -18,8 +18,8 @@ const Teachers = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [filters, setFilters] = useState({
-    selectedLanguage: "",
-    selectedLevel: "",
+    selectedLanguage: "English",
+    selectedLevel: "A1 Beginner",
     priceRange: "all",
   });
 
