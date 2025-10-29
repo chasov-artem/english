@@ -3,7 +3,6 @@
   gap: 20px;
   margin-bottom: 32px;
   text-align: left;
-  justify-content: flex-start;
   align-items: flex-start;
 }
 
@@ -11,7 +10,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 0 0 auto;
 }
 
 .filterLabel {

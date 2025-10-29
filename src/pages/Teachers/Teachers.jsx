@@ -116,7 +116,11 @@ const Teachers = () => {
 
       <div className={styles.teachersList}>
         {displayedTeachers.map((t) => (
-          <TeacherCard key={t.id} teacher={t} />
+          <TeacherCard
+            key={t.id}
+            teacher={t}
+            selectedLevel={filters.selectedLevel}
+          />
         ))}
       </div>
 

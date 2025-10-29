@@ -15,7 +15,6 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: 0 128px;
 }
 
 .noResults {
@@ -29,18 +28,21 @@
 .loadMoreContainer {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 64px;
   padding: 0 128px;
 }
 
 .loadMoreBtn {
-  background: #f4c550;
-  color: #121417;
-  border: none;
   border-radius: 12px;
-  padding: 16px 32px;
+  padding: 16px 48px;
+  width: 183px;
+  height: 60px;
+  background: #f4c550;
+  font-family: var(--font-family);
+  font-weight: 700;
   font-size: 18px;
-  font-weight: 500;
+  line-height: 156%;
+  color: #121417;
   cursor: pointer;
   transition: background-color 0.2s;
 }

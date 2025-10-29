@@ -9,6 +9,8 @@
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
+  /* Reserve scrollbar gutter to avoid layout shift when content grows */
+  scrollbar-gutter: stable;
 }
 
 :root {
@@ -25,6 +27,8 @@ html {
 
 body {
   margin: 0;
+  /* Fallback for older browsers to always reserve vertical scrollbar */
+  overflow-y: scroll;
 }
 
 main {
