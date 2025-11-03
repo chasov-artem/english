@@ -357,6 +357,30 @@
   background: #e6b800;
 }
 
+/* <=1330px: tighten spacing slightly */
+@media (max-width: 1330px) {
+  .teacherCard { gap: 32px; padding: 20px; }
+  .infoRight { gap: 32px; }
+}
+
+/* Tablet: stack header, keep avatar left */
+@media (max-width: 1024px) {
+  .teacherCard { gap: 20px; padding: 20px; }
+  .headerRow { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .infoRight { width: 100%; justify-content: space-between; gap: 20px; }
+  .teacherStats { gap: 16px; }
+}
+
+/* Mobile: column layout */
+@media (max-width: 768px) {
+  .teacherCard { flex-direction: column; gap: 16px; padding: 16px; }
+  .avatarContainer { width: 88px; height: 88px; }
+  .onlineIndicator { bottom: 64px; right: 16px; }
+  .teacherName { font-size: 20px; }
+  .teacherStats { gap: 12px; }
+  .bookBtn { width: 100%; }
+}
+
 .starFilled {
   color: #ffc531;
   width: 16px;

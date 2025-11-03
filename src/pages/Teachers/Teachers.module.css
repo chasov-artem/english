@@ -17,6 +17,21 @@
   gap: 0;
 }
 
+/* <=1330px: narrow desktop spacing */
+@media (max-width: 1330px) {
+  .teachersPage { padding: 64px 64px; }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .teachersPage { padding: 48px 32px; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .teachersPage { padding: 32px 16px; }
+}
+
 .noResults {
   text-align: center;
   color: #8a8a89;

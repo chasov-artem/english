@@ -6,6 +6,25 @@
   align-items: flex-start;
 }
 
+/* <=1330px: tighter */
+@media (max-width: 1330px) {
+  .filtersContainer { gap: 16px; }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .filtersContainer { flex-wrap: wrap; gap: 12px; }
+  .languageSelect { width: 200px; }
+  .levelSelect { width: 220px; }
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 768px) {
+  .filtersContainer { flex-direction: column; gap: 12px; }
+  .filterSelect { font-size: 16px; }
+  .languageSelect, .levelSelect, .priceSelect { width: 100%; }
+}
+
 .filterGroup {
   display: flex;
   flex-direction: column;
