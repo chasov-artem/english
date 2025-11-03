@@ -65,13 +65,13 @@
   background: none;
   border: none;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
 }
 
 .modalClose svg {
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
 }
 
 .modalClose:hover {
@@ -167,23 +167,26 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   flex-shrink: 0;
-  background-color: #fff;
-  border: 2px solid #d9d9d9; /* сірий бордер для неактивного */
+  background-color: transparent;
+  border: 2px solid rgba(18, 20, 23, 0.2);
   position: relative;
   margin: 0;
   box-sizing: border-box;
-  transition: all 0.2s ease;
 }
 
-/* Активний стан */
 .radioInput:checked {
-  border: 2px solid #f4c550; /* зовнішнє коло */
-  background-color: #fff; /* білий проміжок */
-  box-shadow: inset 0 0 0 4px #f4c550; /* внутрішнє заповнення */
+  border-color: #f4c550;
+  background: radial-gradient(
+    circle,
+    #f4c550 0%,
+    #f4c550 7px,
+    #ffffff 4px,
+    #ffffff 100%
+  );
   outline: none;
 }
 
@@ -191,8 +194,7 @@
   font-family: var(--font-family);
   font-weight: 400;
   font-size: 16px;
-  line-height: 137%;
-  text-align: center;
+  line-height: 150%;
   color: #121417;
 }
 
@@ -251,17 +253,15 @@
 }
 
 .submitBtn {
-  border-radius: 12px;
-  padding: 16px 215px;
-  width: 472px;
-  height: 60px;
-  cursor: pointer;
   background: #f4c550;
-  font-family: var(--font-family);
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 156%;
   color: #121417;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
   transition: background-color 0.2s;
   width: 100%;
   margin-top: 22px;
