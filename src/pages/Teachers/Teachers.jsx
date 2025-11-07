@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  getTeachersPaginated,
-  getAllTeachers,
-  filterTeachers,
-} from "../../services/teachersService";
+import React, { useEffect, useState, useCallback } from "react";
+import { getTeachersPaginated } from "../../services/teachersService";
 import TeacherCard from "../../components/TeacherCard/TeacherCard";
 import TeachersFilters from "../../components/TeachersFilters/TeachersFilters";
 import styles from "./Teachers.module.css";
@@ -14,8 +10,11 @@ const Teachers = () => {
   const [allTeachers, setAllTeachers] = useState([]);
   const [filteredTeachers, setFilteredTeachers] = useState([]);
   const [displayedTeachers, setDisplayedTeachers] = useState([]);
-  const [lastKey, setLastKey] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [cursor, setCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [error, setError] = useState("");
   const [filters, setFilters] = useState({
     selectedLanguage: "English",
@@ -23,44 +22,83 @@ const Teachers = () => {
     priceRange: "all",
   });
 
-  const loadAllTeachers = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const teachers = await getAllTeachers();
-      setAllTeachers(teachers);
-    } catch (e) {
-      setError("Не вдалося завантажити викладачів");
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchTeachersPage = useCallback(
+    async (cursorKey = null, append = false) => {
+      if (append) {
+        setIsFetchingMore(true);
+      } else {
+        setIsInitialLoading(true);
+      }
+
+      try {
+        setError("");
+        const { teachers, lastKey, hasMore: moreAvailable } =
+          await getTeachersPaginated(PAGE_SIZE, cursorKey);
+
+        setHasMore(moreAvailable);
+        setCursor(lastKey);
+
+        setAllTeachers((prev) => {
+          if (!append) {
+            return teachers;
+          }
+
+          const existingIds = new Set(prev.map((teacher) => teacher.id));
+          const merged = [...prev];
+
+          teachers.forEach((teacher) => {
+            if (!existingIds.has(teacher.id)) {
+              merged.push(teacher);
+            }
+          });
+
+          return merged;
+        });
+      } catch (e) {
+        setError("Не вдалося завантажити викладачів");
+        console.error(e);
+      } finally {
+        if (append) {
+          setIsFetchingMore(false);
+        } else {
+          setIsInitialLoading(false);
+        }
+      }
+    },
+    []
+  );
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setPage(1);
   };
 
-  const applyFilters = () => {
-    let filtered = [...allTeachers];
+  useEffect(() => {
+    fetchTeachersPage();
+  }, [fetchTeachersPage]);
 
-    // Filter by language
-    if (filters.selectedLanguage) {
-      filtered = filtered.filter((teacher) =>
-        teacher.languages.some((lang) =>
-          lang.toLowerCase().includes(filters.selectedLanguage.toLowerCase())
-        )
-      );
+  useEffect(() => {
+    if (allTeachers.length === 0) {
+      setFilteredTeachers([]);
+      setDisplayedTeachers([]);
+      return;
     }
 
-    // Filter by level
-    if (filters.selectedLevel) {
-      filtered = filtered.filter((teacher) =>
-        teacher.levels.some((level) =>
-          level.toLowerCase().includes(filters.selectedLevel.toLowerCase())
-        )
-      );
-    }
+    const filtered = allTeachers.filter((teacher) => {
+      const matchesLanguage = filters.selectedLanguage
+        ? teacher.languages.some((lang) =>
+            lang.toLowerCase().includes(filters.selectedLanguage.toLowerCase())
+          )
+        : true;
 
-    // Filter by price
-    if (filters.priceRange !== "all") {
-      filtered = filtered.filter((teacher) => {
+      const matchesLevel = filters.selectedLevel
+        ? teacher.levels.some((level) =>
+            level.toLowerCase().includes(filters.selectedLevel.toLowerCase())
+          )
+        : true;
+
+      const matchesPrice = (() => {
+        if (filters.priceRange === "all") return true;
         const price = teacher.price_per_hour;
         switch (filters.priceRange) {
           case "0-20":
@@ -72,47 +110,72 @@ const Teachers = () => {
           default:
             return true;
         }
-      });
-    }
+      })();
+
+      return matchesLanguage && matchesLevel && matchesPrice;
+    });
 
     setFilteredTeachers(filtered);
-    setDisplayedTeachers(filtered.slice(0, PAGE_SIZE));
-    setLastKey(filtered.length > PAGE_SIZE ? PAGE_SIZE - 1 : null);
-  };
 
-  const loadMoreTeachers = () => {
-    const currentCount = displayedTeachers.length;
-    const nextBatch = filteredTeachers.slice(
-      currentCount,
-      currentCount + PAGE_SIZE
-    );
-    setDisplayedTeachers((prev) => [...prev, ...nextBatch]);
-    setLastKey(
-      currentCount + PAGE_SIZE < filteredTeachers.length
-        ? currentCount + PAGE_SIZE - 1
-        : null
-    );
-  };
+    const visibleCount = page * PAGE_SIZE;
+    setDisplayedTeachers(filtered.slice(0, visibleCount));
 
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-  };
-
-  useEffect(() => {
-    loadAllTeachers();
-  }, []);
-
-  useEffect(() => {
-    if (allTeachers.length > 0) {
-      applyFilters();
+    if (
+      filtered.length < visibleCount &&
+      hasMore &&
+      cursor &&
+      !isInitialLoading &&
+      !isFetchingMore
+    ) {
+      fetchTeachersPage(cursor, true);
     }
-  }, [allTeachers, filters]);
+  }, [
+    allTeachers,
+    filters,
+    page,
+    hasMore,
+    cursor,
+    isInitialLoading,
+    isFetchingMore,
+    fetchTeachersPage,
+  ]);
+
+  const handleLoadMore = useCallback(async () => {
+    const nextPage = page + 1;
+    const requiredCount = nextPage * PAGE_SIZE;
+
+    if (filteredTeachers.length >= requiredCount) {
+      setPage(nextPage);
+      return;
+    }
+
+    if (hasMore && cursor && !isFetchingMore) {
+      await fetchTeachersPage(cursor, true);
+    }
+
+    setPage(nextPage);
+  }, [
+    page,
+    filteredTeachers.length,
+    hasMore,
+    cursor,
+    isFetchingMore,
+    fetchTeachersPage,
+  ]);
+
+  const canShowLoadMore =
+    displayedTeachers.length > 0 &&
+    (displayedTeachers.length < filteredTeachers.length || hasMore);
 
   return (
     <div className={styles.teachersPage}>
       {error && <p className={styles.errorMessage}>{error}</p>}
 
       <TeachersFilters filters={filters} onFilterChange={handleFilterChange} />
+
+      {isInitialLoading && (
+        <p className={styles.loadingMessage}>Завантаження викладачів...</p>
+      )}
 
       <div className={styles.teachersList}>
         {displayedTeachers.map((t) => (
@@ -124,20 +187,20 @@ const Teachers = () => {
         ))}
       </div>
 
-      {displayedTeachers.length === 0 && !loading && (
+      {displayedTeachers.length === 0 && !isInitialLoading && (
         <p className={styles.noResults}>
           No teachers found with the selected filters
         </p>
       )}
 
-      {displayedTeachers.length > 0 && lastKey && (
+      {canShowLoadMore && (
         <div className={styles.loadMoreContainer}>
           <button
             className={styles.loadMoreBtn}
-            onClick={loadMoreTeachers}
-            disabled={loading}
+            onClick={handleLoadMore}
+            disabled={isFetchingMore}
           >
-            {loading ? "Loading..." : "Load more"}
+            {isFetchingMore ? "Loading..." : "Load more"}
           </button>
         </div>
       )}

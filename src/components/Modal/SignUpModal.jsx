@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useFormik } from "formik";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { signupThunk } from "../../store/authSlice";
@@ -18,36 +19,43 @@ const validationSchema = yup.object({
 
 const SignUpModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
 
-  const formik = useFormik({
-    initialValues: {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, touchedFields, isSubmitted, isSubmitting },
+  } = useForm({
+    mode: "onTouched",
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
       name: "",
       email: "",
       password: "",
     },
-    validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      try {
-        setError("");
-        setLoading(true);
-
-        const res = await dispatch(
-          signupThunk({ email: values.email, password: values.password })
-        );
-        if (res.error) throw new Error(res.error.message || "Signup failed");
-
-        onClose();
-        formik.resetForm();
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    },
   });
+
+  const submitHandler = async (values) => {
+    try {
+      setError("");
+
+      const res = await dispatch(
+        signupThunk({ email: values.email, password: values.password })
+      );
+
+      if (res.error) {
+        const message = res.payload || res.error.message || "Signup failed";
+        throw new Error(message);
+      }
+
+      onClose();
+      reset();
+    } catch (submitError) {
+      setError(submitError.message || "Signup failed");
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -67,10 +75,17 @@ const SignUpModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setError("");
+      reset();
+    }
+  }, [isOpen, reset]);
+
   const handleClose = () => {
     onClose();
     setError("");
-    formik.resetForm();
+    reset();
   };
 
   if (!isOpen) return null;
@@ -92,24 +107,22 @@ const SignUpModal = ({ isOpen, onClose }) => {
             information
           </div>
 
-          <form onSubmit={formik.handleSubmit} className={styles.authForm}>
+          <form
+            onSubmit={handleSubmit(submitHandler)}
+            className={styles.authForm}
+          >
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <div className={styles.formGroup}>
               <input
                 type="text"
                 id="name"
-                name="name"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.name && formik.errors.name ? styles.error : ""
-                }
+                {...register("name")}
+                className={errors.name ? styles.inputError : ""}
                 placeholder="Name"
               />
-              {formik.touched.name && formik.errors.name && (
-                <span className={styles.fieldError}>{formik.errors.name}</span>
+              {(touchedFields.name || isSubmitted) && errors.name && (
+                <span className={styles.fieldError}>{errors.name.message}</span>
               )}
             </div>
 
@@ -117,19 +130,12 @@ const SignUpModal = ({ isOpen, onClose }) => {
               <input
                 type="email"
                 id="email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.email && formik.errors.email
-                    ? styles.error
-                    : ""
-                }
+                {...register("email")}
+                className={errors.email ? styles.inputError : ""}
                 placeholder="Email"
               />
-              {formik.touched.email && formik.errors.email && (
-                <span className={styles.fieldError}>{formik.errors.email}</span>
+              {(touchedFields.email || isSubmitted) && errors.email && (
+                <span className={styles.fieldError}>{errors.email.message}</span>
               )}
             </div>
 
@@ -138,15 +144,8 @@ const SignUpModal = ({ isOpen, onClose }) => {
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  name="password"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  className={
-                    formik.touched.password && formik.errors.password
-                      ? styles.error
-                      : ""
-                  }
+                  {...register("password")}
+                  className={errors.password ? styles.inputError : ""}
                   placeholder="Password"
                 />
                 <button
@@ -157,19 +156,19 @@ const SignUpModal = ({ isOpen, onClose }) => {
                   <FiEyeOff />
                 </button>
               </div>
-              {formik.touched.password && formik.errors.password && (
+              {(touchedFields.password || isSubmitted) && errors.password && (
                 <span className={styles.fieldError}>
-                  {formik.errors.password}
+                  {errors.password.message}
                 </span>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className={styles.submitBtn}
             >
-              {loading ? "Loading..." : "Sign Up"}
+              {isSubmitting ? "Loading..." : "Sign Up"}
             </button>
           </form>
         </div>

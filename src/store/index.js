@@ -31,4 +31,5 @@ export const persistor = persistStore(store);
 
 export const selectCurrentUser = (state) => state.auth.currentUser;
 export const selectAuthLoading = (state) => state.auth.loading;
+export const selectAuthInitialized = (state) => state.auth.initialized;
 export const selectFavorites = (state) => state.favorites.items;

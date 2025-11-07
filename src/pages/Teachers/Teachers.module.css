@@ -47,6 +47,14 @@
   padding: 0 128px;
 }
 
+.loadingMessage {
+  text-align: center;
+  color: #8a8a89;
+  font-size: 18px;
+  margin: 40px 0;
+  padding: 0 128px;
+}
+
 .loadMoreBtn {
   border-radius: 12px;
   padding: 16px 48px;

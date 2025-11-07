@@ -51,30 +51,51 @@ export const getAllTeachers = async () => {
 
 // Get teachers with pagination (ordered by key)
 export const getTeachersPaginated = async (pageSize = 4, lastKey = null) => {
-  try {
-    // Use root path since data is loaded there
-    let q = query(ref(database), orderByKey(), limitToFirst(pageSize));
-    if (lastKey) {
-      q = query(
-        ref(database),
+  const pageLimit = pageSize + 1;
+
+  const buildQuery = (reference, cursor) => {
+    if (cursor) {
+      return query(
+        reference,
         orderByKey(),
-        startAfter(lastKey),
-        limitToFirst(pageSize)
+        startAfter(cursor),
+        limitToFirst(pageLimit)
       );
     }
-    const snapshot = await get(q);
+    return query(reference, orderByKey(), limitToFirst(pageLimit));
+  };
 
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      const teachers = mapSnapshotToArray(data);
-      const keys = Object.keys(data).sort((a, b) => parseInt(a) - parseInt(b));
+  const snapshotToArray = (snapshot) => {
+    const items = [];
+    snapshot.forEach((child) => {
+      items.push({ id: child.key, ...child.val() });
+    });
+    return items;
+  };
 
-      return {
-        teachers,
-        lastKey: keys[keys.length - 1] || null,
-      };
+  try {
+    let reference = ref(database, "teachers");
+    let snapshot = await get(buildQuery(reference, lastKey));
+
+    if (!snapshot.exists()) {
+      reference = ref(database);
+      snapshot = await get(buildQuery(reference, lastKey));
     }
-    return { teachers: [], lastKey: null };
+
+    if (!snapshot.exists()) {
+      return { teachers: [], lastKey: null, hasMore: false };
+    }
+
+    const items = snapshotToArray(snapshot);
+    const hasMore = items.length > pageSize;
+    const trimmed = hasMore ? items.slice(0, pageSize) : items;
+    const nextCursor = trimmed.length > 0 ? trimmed[trimmed.length - 1].id : null;
+
+    return {
+      teachers: trimmed,
+      lastKey: nextCursor,
+      hasMore,
+    };
   } catch (error) {
     console.error("Error fetching paginated teachers:", error);
     throw error;

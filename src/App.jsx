@@ -4,6 +4,7 @@ import Layout from './components/Layout/Layout';
 import Home from './pages/Home/Home';
 import Teachers from './pages/Teachers/Teachers';
 import Favorites from './pages/Favorites/Favorites';
+import PrivateRoute from './routes/PrivateRoute';
 import styles from './App.module.css';
 
 function App() {
@@ -14,7 +15,14 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/teachers" element={<Teachers />} />
-            <Route path="/favorites" element={<Favorites />} />
+            <Route
+              path="/favorites"
+              element={
+                <PrivateRoute>
+                  <Favorites />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </Layout>
       </div>

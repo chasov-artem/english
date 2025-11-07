@@ -1,16 +1,62 @@
-# React + Vite
+# Платформа для вивчення англійської
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-застосунок для компанії, що надає послуги онлайн-уроків з мовами. Користувач може переглядати викладачів, фільтрувати їх за мовою, рівнем та ціною, бронювати пробне заняття та формувати приватний список «Обраних» після авторизації.
 
-Currently, two official plugins are available:
+## Основні сторінки
+- **Home** – промо-блок з перевагами сервісу та кнопкою переходу до списку викладачів.
+- **Teachers** – каталог викладачів з фільтрами, пагінацією «Load more», розширюваними картками, модалкою бронювання.
+- **Favorites** *(приватна)* – список викладачів, доданих до обраних авторизованим користувачем.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Функціональність
+- Авторизація (реєстрація, логін, логаут, отримання поточного користувача) через Firebase Authentication.
+- Зберігання даних викладачів у Firebase Realtime Database; поступове завантаження по 4 картки.
+- Додавання викладачів в обрані / видалення з обраних з персистом у `localStorage` (redux-persist).
+- Модальні вікна логіну, реєстрації та бронювання з формами на `react-hook-form` + `yup`, підтримка закриття по `Esc`, кліку по бекдропу чи «хрестику».
+- Адаптивна верстка десктоп / планшет / мобільний, стилі через CSS Modules.
 
-## React Compiler
+## Використані технології
+- **React 19** + **Vite**
+- **React Router 7**
+- **Redux Toolkit** + **redux-persist**
+- **Firebase (Auth, Realtime Database)**
+- **react-hook-form** та **yup** для форм та валідації
+- **CSS Modules**, адаптивна верстка
+- **React Icons** для іконографіки
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## Початок роботи
+```bash
+npm install
+npm run dev
+```
+Проєкт запуститься на `http://localhost:5173/` (порт можна змінити у Vite).
 
-## Expanding the ESLint configuration
+### Скрипти
+- `npm run dev` – запуск у режимі розробки
+- `npm run build` – збірка продакшн-версії
+- `npm run preview` – прев’ю зібраної версії
+- `npm run lint` – перевірка ESLint
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Налаштування оточення
+Створіть файл `.env` (або `.env.local`) і додайте ключі Firebase:
+
+```
+VITE_API_KEY=...
+VITE_AUTH_DOMAIN=...
+VITE_DATABASE_URL=...
+VITE_PROJECT_ID=...
+VITE_STORAGE_BUCKET=...
+VITE_MESSAGING_SENDER_ID=...
+VITE_APP_ID=...
+```
+
+## Деплой
+- **Production**: *додайте посилання після розгортання (Netlify / Vercel / GitHub Pages...)*
+
+## Відповідність ТЗ
+- Реалізовано 3 сторінки (Home, Teachers, Favorites) із заявленим функціоналом.
+- Авторизація та робота з даними виконані через Firebase.
+- Форми (логін, реєстрація, бронювання) створені на `react-hook-form` + `yup`, усі поля обов’язкові.
+- «Favorites» – приватний маршрут, доступний лише після логіну.
+- Кнопка «Load more» підвантажує наступну порцію викладачів із бази.
+- Картки відповідають макету: розкривання, відгуки, «Book trial lesson» тощо.
+- Код відформатований, ESLint проходить без помилок.

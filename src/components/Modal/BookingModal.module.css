@@ -231,8 +231,8 @@
   border-color: #667eea;
 }
 
-.formGroup input.error {
-  border-color: #e74c3c;
+.inputError {
+  border-color: #e74c3c !important;
 }
 
 .fieldError {

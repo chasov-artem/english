@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useFormik } from "formik";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoClose } from "react-icons/io5";
 import styles from "./BookingModal.module.css";
@@ -11,39 +12,52 @@ const validationSchema = yup.object({
   reason: yup.string().required("Reason is required"),
 });
 
+const LEARNING_REASONS = [
+  "Career and business",
+  "Lesson for kids",
+  "Living abroad",
+  "Exams and coursework",
+  "Culture, travel or hobby",
+];
+
 const BookingModal = ({ isOpen, onClose, teacher }) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const formik = useFormik({
-    initialValues: {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, touchedFields, isSubmitted, isSubmitting },
+  } = useForm({
+    mode: "onTouched",
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
       name: "",
       email: "",
       phone: "",
-      reason: "Career and business",
-    },
-    validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      try {
-        setError("");
-        setLoading(true);
-
-        // Here you would typically send the booking request to your backend
-        console.log("Booking data:", { ...values, teacherId: teacher.id });
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        alert("Booking request sent successfully!");
-        onClose();
-        formik.resetForm();
-      } catch (error) {
-        setError("Failed to send booking request. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+      reason: LEARNING_REASONS[0],
     },
   });
+
+  const submitHandler = async (values) => {
+    try {
+      setError("");
+
+      if (teacher?.id) {
+        console.log("Booking data:", { ...values, teacherId: teacher.id });
+      }
+
+      // Simulate API call to backend booking endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      alert("Booking request sent successfully!");
+      onClose();
+      reset();
+    } catch (submitError) {
+      console.error("Booking error:", submitError);
+      setError("Failed to send booking request. Please try again.");
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -63,21 +77,30 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setError("");
+      reset({
+        name: "",
+        email: "",
+        phone: "",
+        reason: LEARNING_REASONS[0],
+      });
+    }
+  }, [isOpen, reset]);
+
   const handleClose = () => {
     onClose();
     setError("");
-    formik.resetForm();
+    reset({
+      name: "",
+      email: "",
+      phone: "",
+      reason: LEARNING_REASONS[0],
+    });
   };
 
   if (!isOpen) return null;
-
-  const reasons = [
-    "Career and business",
-    "Lesson for kids",
-    "Living abroad",
-    "Exams and coursework",
-    "Culture, travel or hobby",
-  ];
 
   return (
     <div className={styles.overlay} onClick={handleClose}>
@@ -110,7 +133,10 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
             </div>
           </div>
 
-          <form onSubmit={formik.handleSubmit} className={styles.bookingForm}>
+          <form
+            onSubmit={handleSubmit(submitHandler)}
+            className={styles.bookingForm}
+          >
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <div className={styles.reasonSection}>
@@ -118,24 +144,22 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
                 What is your main reason for learning English?
               </h3>
               <div className={styles.radioGroup}>
-                {reasons.map((reason) => (
+                {LEARNING_REASONS.map((reason) => (
                   <label key={reason} className={styles.radioLabel}>
                     <input
                       type="radio"
                       name="reason"
                       value={reason}
-                      checked={formik.values.reason === reason}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
+                      {...register("reason")}
                       className={styles.radioInput}
                     />
                     <span className={styles.radioText}>{reason}</span>
                   </label>
                 ))}
               </div>
-              {formik.touched.reason && formik.errors.reason && (
+              {(touchedFields.reason || isSubmitted) && errors.reason && (
                 <span className={styles.fieldError}>
-                  {formik.errors.reason}
+                  {errors.reason.message}
                 </span>
               )}
             </div>
@@ -144,17 +168,12 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
               <input
                 type="text"
                 id="name"
-                name="name"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.name && formik.errors.name ? styles.error : ""
-                }
+                {...register("name")}
+                className={errors.name ? styles.inputError : ""}
                 placeholder="Full Name"
               />
-              {formik.touched.name && formik.errors.name && (
-                <span className={styles.fieldError}>{formik.errors.name}</span>
+              {(touchedFields.name || isSubmitted) && errors.name && (
+                <span className={styles.fieldError}>{errors.name.message}</span>
               )}
             </div>
 
@@ -162,19 +181,12 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
               <input
                 type="email"
                 id="email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.email && formik.errors.email
-                    ? styles.error
-                    : ""
-                }
+                {...register("email")}
+                className={errors.email ? styles.inputError : ""}
                 placeholder="Email"
               />
-              {formik.touched.email && formik.errors.email && (
-                <span className={styles.fieldError}>{formik.errors.email}</span>
+              {(touchedFields.email || isSubmitted) && errors.email && (
+                <span className={styles.fieldError}>{errors.email.message}</span>
               )}
             </div>
 
@@ -182,28 +194,21 @@ const BookingModal = ({ isOpen, onClose, teacher }) => {
               <input
                 type="tel"
                 id="phone"
-                name="phone"
-                value={formik.values.phone}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.phone && formik.errors.phone
-                    ? styles.error
-                    : ""
-                }
+                {...register("phone")}
+                className={errors.phone ? styles.inputError : ""}
                 placeholder="Phone number"
               />
-              {formik.touched.phone && formik.errors.phone && (
-                <span className={styles.fieldError}>{formik.errors.phone}</span>
+              {(touchedFields.phone || isSubmitted) && errors.phone && (
+                <span className={styles.fieldError}>{errors.phone.message}</span>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className={styles.submitBtn}
             >
-              {loading ? "Sending..." : "Book"}
+              {isSubmitting ? "Sending..." : "Book"}
             </button>
           </form>
         </div>

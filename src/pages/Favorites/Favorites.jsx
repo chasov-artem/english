@@ -6,7 +6,7 @@ import styles from "./Favorites.module.css";
 import pageStyles from "../Teachers/Teachers.module.css";
 
 const Favorites = () => {
-  const favoriteIds = useSelector((state) => state.favorites.items) || [];
+  const favoriteIds = useSelector((state) => state.favorites.items);
   const [favoriteTeachers, setFavoriteTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
